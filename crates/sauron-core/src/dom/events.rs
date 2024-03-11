@@ -13,10 +13,7 @@ pub use web_sys::{
     AnimationEvent, FocusEvent, HashChangeEvent, KeyboardEvent, MouseEvent, Selection, TouchEvent,
     TransitionEvent,
 };
-use web_sys::{
-    EventTarget, HtmlDetailsElement, HtmlElement, HtmlInputElement, HtmlSelectElement,
-    HtmlTextAreaElement,
-};
+use web_sys::{EventTarget, FileList, HtmlDetailsElement, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
 
 #[derive(Clone, Copy)]
 #[repr(i16)]
@@ -276,6 +273,16 @@ impl InputEvent {
             content
         } else {
             panic!("fail in mapping event into input event");
+        }
+    }
+
+    /// return the list of files from the input event
+    pub fn files(&self) -> FileList {
+        let target: EventTarget = self.event.target().expect("Unable to get event target");
+        if let Some(input) = target.dyn_ref::<HtmlInputElement>() {
+            input.files().expect("must have files")
+        } else {
+            panic!("must be a html input element");
         }
     }
 
